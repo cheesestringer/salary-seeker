@@ -1,0 +1,21 @@
+{
+  "name": "Salary Seeker",
+  "version": "1.0.3",
+  "description": "Calculate the salary range for jobs advertised on Seek.",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "icons": {
+    "18": "icons/icon18.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "webNavigation",
+    "https://*.seek.com.au/*",
+    "https://www.seek.co.nz/*"
+  ],
+  "manifest_version": 2
+}
