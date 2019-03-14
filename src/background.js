@@ -4,13 +4,24 @@ const calculateRange = async jobId => {
   const minRange = 30000;
   const maxRange = 200000;
 
-  const maxSalary = await getMaxSalary(jobId, minRange, maxRange);
-  const minSalary = await getMinSalary(jobId, minRange, maxSalary);
-
-  console.log(`Salary range is $${minSalary} - $${maxSalary}`);
-
-  if (minSalary && maxSalary) {
-    return `$${minSalary.toLocaleString()} - $${maxSalary.toLocaleString()}`;
+  const jobDetails = await getJobDetails(jobId);
+  const job = jobDetails.data.find(x => x.id == jobId);
+  if (job) {
+    searchUrl.searchParams.delete("jobid");
+    searchUrl.searchParams.set("advertiserid", job.advertiser.id);
+    searchUrl.searchParams.set("keywords", job.teaser);
+    searchUrl.searchParams.set("sourcesystem", "houston");
+  
+    const maxSalary = await getMaxSalary(jobId, minRange, maxRange);
+    const minSalary = await getMinSalary(jobId, minRange, maxSalary);
+  
+    console.log(`Salary range is $${minSalary} - $${maxSalary}`);
+  
+    if (minSalary && maxSalary) {
+      return `$${minSalary.toLocaleString()} - $${maxSalary.toLocaleString()}`;
+    }
+  } else {
+    sendMessage(`Failed to find job ${jobId} in the response.`);
   }
 };
 
@@ -33,7 +44,7 @@ const getMaxSalary = async (jobId, min, max) => {
       }
     } else {
       maximum = searchValue;
-      searchValue = getMiddle(minimum, searchValue );
+      searchValue = getMiddle(minimum, searchValue);
 
       // Check percentage change and round up to the nearest 1k to save on requests.
       if (buggerAllChange(searchValue, maximum)) {
@@ -62,7 +73,7 @@ const getMinSalary = async (jobId, min, max) => {
       // Check percentage change and round down to the nearest 1k to save on requests.
       if (buggerAllChange(searchValue, maximum)) {
         console.log(`Job found: Min ${searchValue}-${maximum} found after ${i + 1} requests.`);
-        return roundDown(maximum);
+        return roundDown(searchValue);
       }
     } else {
       minimum = searchValue;
@@ -104,14 +115,19 @@ const getJobId = url => {
   }
 };
 
-const getJob = async (jobId, min, max) => {
+const getJobDetails = async (jobId) => {
   searchUrl.searchParams.set("jobid", jobId);
+  const response = await fetch(searchUrl.href);
+  return response.json();
+};
+
+const getJob = async (jobId, min, max) => {
   searchUrl.searchParams.set("salaryrange", `${min}-${max}`);
   const response = await fetch(searchUrl.href);
+  
   if (response.status === 200) {
     const result = await response.json();
-
-    if (result && result.data && result.data.length === 1) {
+    if (result && result.data && result.data.find(x => x.id == jobId)) {
       return { found: true };
     } else {
       return { found: false };
