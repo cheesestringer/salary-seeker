@@ -1,6 +1,6 @@
 {
   "name": "Salary Seeker",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Calculate the salary range for jobs advertised on Seek.",
   "background": {
     "scripts": ["background.js"],

@@ -21,7 +21,7 @@ const calculateRange = async jobId => {
       return `$${minSalary.toLocaleString()} - $${maxSalary.toLocaleString()}`;
     }
   } else {
-    sendMessage(`Failed to find job ${jobId} in the response.`);
+    throw new Error(`Failed to find job ${jobId}.`);
   }
 };
 
@@ -124,7 +124,7 @@ const getJobDetails = async (jobId) => {
 const getJob = async (jobId, min, max) => {
   searchUrl.searchParams.set("salaryrange", `${min}-${max}`);
   const response = await fetch(searchUrl.href);
-  
+
   if (response.status === 200) {
     const result = await response.json();
     if (result && result.data && result.data.find(x => x.id == jobId)) {
@@ -133,17 +133,14 @@ const getJob = async (jobId, min, max) => {
       return { found: false };
     }
   } else {
-    sendMessage(`Error: Request failed with ${response.status}`);
     throw new Error(`Unsuccessful response: ${response.status}`);
   }
 };
 
-const sendMessage = result => {
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    chrome.tabs.sendMessage(tabs[0].id, {
-      message: "updateSalary",
-      result: result
-    });
+const sendMessage = (tabId, result) => {
+  chrome.tabs.sendMessage(tabId, {
+    message: "updateSalary",
+    result: result
   });
 };
 
@@ -165,10 +162,14 @@ const handleScriptInjection = (tabId, url) => {
         });
       }
 
-      const jobId = getJobId(url);
-      if (jobId) {
-        const salary = await calculateRange(jobId);
-        sendMessage(salary);
+      try {
+        const jobId = getJobId(url);
+        if (jobId) {
+          const salary = await calculateRange(jobId);
+          sendMessage(tabId, salary);
+        }
+      } catch(exception) {
+        sendMessage(tabId, "Failed to calculate salary range.")
       }
     }
   );
