@@ -9,7 +9,7 @@ const calculateRange = async jobId => {
   if (job) {
     searchUrl.searchParams.delete("jobid");
     searchUrl.searchParams.set("advertiserid", job.advertiser.id);
-    searchUrl.searchParams.set("keywords", job.teaser);
+    searchUrl.searchParams.set("pagesize", 50);
     searchUrl.searchParams.set("sourcesystem", "houston");
   
     const maxSalary = await getMaxSalary(jobId, minRange, maxRange);
