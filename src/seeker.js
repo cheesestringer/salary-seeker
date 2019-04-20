@@ -38,7 +38,7 @@ const updatePlaceholder = text => {
 addPlaceholder();
 
 chrome.runtime.onMessage.addListener(request => {
-  if (request.message === "updateSalary") {
+  if (request.message === "update-placeholder") {
     request.result
       ? updatePlaceholder(request.result)
       : updatePlaceholder("Error downloading salary.");
