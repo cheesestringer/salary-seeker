@@ -255,7 +255,7 @@ const isExpiredJobUrl = url => url.toLowerCase().includes("/expiredjob/");
 
 const isSupportedUrl = url => isJobUrl(url) || isExpiredJobUrl(url);
 
-// Handle job access by site navigation.
+// Handle job access by site navigation or new tab.
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status !== "loading" || !changeInfo.url) {
     return;
@@ -264,9 +264,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   handleScriptInjection(tabId, changeInfo.url);
 });
 
-// Handle job access by direct URL.
+// Handle job access on page refresh.
 chrome.webNavigation.onCommitted.addListener(details => {
-  if (!details.tabId || !details.url) {
+  if (!details.tabId || !details.url || details.transitionType !== "reload") {
     return;
   }
 
