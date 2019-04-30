@@ -3,7 +3,8 @@ const constants = {
   maxRequests: 10,
   maxCacheDays: 45,
   cacheKey: "jobs",
-  searchUrl: "https://chalice-search-api.cloud.seek.com.au/search"
+  searchUrl: "https://chalice-search-api.cloud.seek.com.au/search",
+  version: chrome.app.getDetails().version
 };
 
 const rangeUrl = new URL(constants.searchUrl);
@@ -21,8 +22,6 @@ const calculateRange = async jobId => {
 
     const maxSalary = await getMaxSalary(jobId, minRange, maxRange);
     const minSalary = await getMinSalary(jobId, minRange, maxSalary);
-
-    console.log(`Salary range is $${minSalary} - $${maxSalary}`);
 
     if (minSalary && maxSalary) {
       const range = `$${minSalary.toLocaleString()} - $${maxSalary.toLocaleString()}`;
@@ -157,7 +156,8 @@ const cacheJob = (jobId, minimum, maximum, range) => {
       minimum: minimum,
       maxiumum: maximum,
       range: range,
-      created: currentDate
+      created: currentDate,
+      version: constants.version
     };
 
     const existingJobIndex = cache.findIndex(x => x.id === jobId);
@@ -198,55 +198,52 @@ const handleScriptInjection = (tabId, url) => {
     async response => {
       // Seeker is already injected.
       if (response[0]) {
-        chrome.tabs.executeScript(tabId, {
-          code: "addPlaceholder();"
-        });
-
-        checkJobType(tabId, url);
+        chrome.tabs.executeScript(tabId, { code: "addPlaceholder();" }, () => checkJobType(tabId, url));
       } else {
-        chrome.tabs.executeScript(tabId, {
-          file: "seeker.js"
-        },
-        async () => {
-          checkJobType(tabId, url);
-        });
+        chrome.tabs.executeScript(tabId, { file: "seeker.js" }, () => checkJobType(tabId, url));
       }
     }
   );
 };
 
-const checkJobType = (tabId, url) => {
+const checkJobType = async (tabId, url) => {
+  // Use cache for same day jobs, expired jobs, and exceptions.
+  const cachedJob = findCachedJob(url);
+
   if (isJobUrl(url)) {
     try {
-      findSalaryRange(tabId, url);
+      const isCurrent = cachedJob && cachedJob.version === constants.version; // Use cache for jobs created on same version.
+      const createdToday = cachedJob && getDifferenceInDays(new Date().getTime(), cachedJob.created) === 0; // Use cache for jobs viewed on the same day.
+
+      if (isCurrent && createdToday) {
+        console.log(`Cached salary range is ${cachedJob.range}`);
+        sendMessage(tabId, cachedJob.range);
+      } else {
+        const range = await findSalaryRange(url);
+        console.log(`Salary range is ${range}`);
+        sendMessage(tabId, range);
+      }
     } catch (exception) {
-      // Load from cache if we fail to calculate the range.
-      findCachedJob(tabId, url);
-      sendMessage(tabId, `Failed to calculate salary range: ${exception.message}`)
+      sendMessage(tabId, cachedJob ? cachedJob.range : `Failed to calculate salary range: ${exception.message}`);
     }
   } else if (isExpiredJobUrl(url)) {
-    try {
-      findCachedJob(tabId, url);
-    } catch (exception) {
-      sendMessage(tabId, `Failed to load cached salary range: ${exception.message}`);
-    }
+    sendMessage(tabId, cachedJob ? cachedJob.range : "Couldn't find a cached salary for this job");
   }
 };
 
-const findSalaryRange = async (tabId, url) => {
+const findSalaryRange = async url => {
   const jobId = getJobId(url);
-  if (jobId) {
-    const salary = await calculateRange(jobId);
-    sendMessage(tabId, salary);
-  }
+  return jobId ? calculateRange(jobId) : null;
 };
 
-const findCachedJob = (tabId, url) => {
-  const jobCache = JSON.parse(localStorage.getItem(constants.cacheKey)) || [];
-  const jobId = getJobId(url);
-  const job = jobCache.find(x => x.id === jobId);
-
-  sendMessage(tabId, job ? job.range : "No cache exists for this job.");
+const findCachedJob = url => {
+  try {
+    const jobCache = JSON.parse(localStorage.getItem(constants.cacheKey)) || [];
+    const jobId = getJobId(url);
+    return jobCache.find(x => x.id === jobId);
+  } catch (exception) {
+    return null;
+  }
 };
 
 const isJobUrl = url => url.toLowerCase().includes("/job/");
