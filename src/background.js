@@ -4,12 +4,18 @@ const constants = {
   maxCacheDays: 45,
   cacheKey: "jobs",
   searchUrl: "https://chalice-search-api.cloud.seek.com.au/search",
+  seekNewZealand: "seek.co.nz",
   version: chrome.runtime.getManifest().version
 };
 
 const rangeUrl = new URL(constants.searchUrl);
 
-const calculateRange = async jobId => {
+const calculateRange = async url => {
+  const jobId = getJobId(url);
+  if (!jobId) {
+    return null;
+  }
+
   const minRange = 30000;
   const maxRange = 200000;
 
@@ -19,6 +25,12 @@ const calculateRange = async jobId => {
     rangeUrl.searchParams.set("advertiserid", job.advertiser.id);
     rangeUrl.searchParams.set("pagesize", constants.maxResults);
     rangeUrl.searchParams.set("sourcesystem", "houston");
+
+    if (url.includes(constants.seekNewZealand)) {
+      rangeUrl.searchParams.set("where", "New+Zealand");
+    } else {
+      rangeUrl.searchParams.delete("where");
+    }
 
     const maxSalary = await getMaxSalary(jobId, minRange, maxRange);
     const minSalary = await getMinSalary(jobId, minRange, maxSalary);
@@ -219,7 +231,7 @@ const checkJobType = async (tabId, url) => {
         console.log(`Cached salary range is ${cachedJob.range}`);
         sendMessage(tabId, cachedJob.range);
       } else {
-        const range = await findSalaryRange(url);
+        const range = await calculateRange(url);
         console.log(`Salary range is ${range}`);
         sendMessage(tabId, range);
       }
@@ -229,11 +241,6 @@ const checkJobType = async (tabId, url) => {
   } else if (isExpiredJobUrl(url)) {
     sendMessage(tabId, cachedJob ? cachedJob.range : "Couldn't find a cached salary for this job");
   }
-};
-
-const findSalaryRange = async url => {
-  const jobId = getJobId(url);
-  return jobId ? calculateRange(jobId) : null;
 };
 
 const findCachedJob = url => {
