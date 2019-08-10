@@ -3,6 +3,11 @@ const selectors = {
 };
 
 const addPlaceholder = () => {
+  // Check if placeholder already exists.
+  if (document.getElementById(selectors.salaryRange)) {
+    return;
+  }
+
   const infoSections = document.querySelectorAll(
     '[aria-labelledby="jobInfoHeader"]'
   );

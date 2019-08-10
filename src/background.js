@@ -4,7 +4,7 @@ const constants = {
   maxCacheDays: 45,
   cacheKey: "jobs",
   searchUrl: "https://chalice-search-api.cloud.seek.com.au/search",
-  version: chrome.app.getDetails().version
+  version: chrome.runtime.getManifest().version
 };
 
 const rangeUrl = new URL(constants.searchUrl);
@@ -252,20 +252,9 @@ const isExpiredJobUrl = url => url.toLowerCase().includes("/expiredjob/");
 
 const isSupportedUrl = url => isJobUrl(url) || isExpiredJobUrl(url);
 
-// Handle job access by site navigation or new tab.
+// Handle job access by site navigation, new tab, and page refresh.
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status !== "loading" || !changeInfo.url) {
-    return;
+  if (changeInfo.status === "complete" && tab.url) {
+    handleScriptInjection(tabId, tab.url);
   }
-
-  handleScriptInjection(tabId, changeInfo.url);
-});
-
-// Handle job access on page refresh.
-chrome.webNavigation.onCommitted.addListener(details => {
-  if (!details.tabId || !details.url || details.transitionType !== "reload") {
-    return;
-  }
-
-  handleScriptInjection(details.tabId, details.url);
 });
