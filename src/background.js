@@ -3,7 +3,7 @@ const constants = {
   maxRequests: 10,
   maxCacheDays: 45,
   cacheKey: "jobs",
-  searchUrl: "https://chalice-search-api.cloud.seek.com.au/search",
+  searchUrl: "https://jobsearch-api.cloud.seek.com.au/search",
   seekNewZealand: "seek.co.nz",
   version: chrome.runtime.getManifest().version
 };
