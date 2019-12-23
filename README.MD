@@ -7,6 +7,7 @@ Calculate the salary range for jobs advertised on [Seek](https://seek.com.au).
 - [Chrome](https://chrome.google.com/webstore/detail/salary-seeker/okapllpgbpdbfbpaelpjpgdmholakcfm)
 - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/salary-seeker)
 - [Opera](https://addons.opera.com/en/extensions/details/salary-seeker)
+- [Edge](https://microsoftedge.microsoft.com/addons/detail/boiecpigoakicdienoiknphpnkejcacc)
 
 ![Demo](demo.png?raw=true)
 
