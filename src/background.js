@@ -210,7 +210,7 @@ const handleScriptInjection = (tabId, url) => {
     async response => {
       // Seeker is already injected.
       if (response[0]) {
-        chrome.tabs.executeScript(tabId, { code: "addPlaceholder();" }, () => checkJobType(tabId, url));
+        checkJobType(tabId, url);
       } else {
         chrome.tabs.executeScript(tabId, { file: "seeker.js" }, () => checkJobType(tabId, url));
       }
