@@ -2,6 +2,8 @@
 
 Calculate the salary range for jobs advertised on [Seek](https://seek.com.au).
 
+<img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" width="120" />
+
 ### Install
 
 - [Chrome](https://chrome.google.com/webstore/detail/salary-seeker/okapllpgbpdbfbpaelpjpgdmholakcfm)
@@ -10,6 +12,11 @@ Calculate the salary range for jobs advertised on [Seek](https://seek.com.au).
 - [Edge](https://microsoftedge.microsoft.com/addons/detail/boiecpigoakicdienoiknphpnkejcacc)
 
 ![Demo](demo.png?raw=true)
+
+### Privacy
+All searches are performed within your own browser and are not stored or shared to anyone else.
+
+To enforce this our [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) uses the `connect-src` directive to restrict communication to Seek's job search API at `jobsearch-api.cloud.seek.com.au`.
 
 ### Testing
 
