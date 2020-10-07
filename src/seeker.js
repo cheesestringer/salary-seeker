@@ -3,15 +3,7 @@ const selectors = {
 };
 
 const addPlaceholder = () => {
-  // Check if placeholder already exists.
-  if (document.getElementById(selectors.salaryRange)) {
-    return;
-  }
-
-  const infoSections = document.querySelectorAll(
-    '[aria-labelledby="jobInfoHeader"]'
-  );
-
+  const infoSections = document.querySelectorAll('[aria-labelledby="jobInfoHeader"]');
   for (const section of infoSections) {
     const items = section.querySelectorAll("dd");
     const salaryRange = items[1].cloneNode(true);
@@ -33,19 +25,27 @@ const addPlaceholder = () => {
   }
 };
 
-const updatePlaceholder = text => {
-  const elements = document.querySelectorAll(`#${selectors.salaryRange}`);
-  for (const element of elements) {
-    element.innerText = text;
-  }
+const updatePlaceholder = (text) => {
+  // Wait for a max of 2 seconds for career insights to load before adding the placeholder.
+  let elapsed = 0;
+  const interval = setInterval(() => {
+    const insights = document.querySelector("div[data-automation='dynamic-lmis']");
+    if (insights || elapsed >= 2000) {
+      clearInterval(interval);
+      addPlaceholder();
+
+      const elements = document.querySelectorAll(`#${selectors.salaryRange}`);
+      for (const element of elements) {
+        element.innerText = text;
+      }
+    }
+
+    elapsed += 100;
+  }, 100);
 };
 
-addPlaceholder();
-
-chrome.runtime.onMessage.addListener(request => {
+chrome.runtime.onMessage.addListener((request) => {
   if (request.message === "update-placeholder") {
-    request.result
-      ? updatePlaceholder(request.result)
-      : updatePlaceholder("Error downloading salary.");
+    request.result ? updatePlaceholder(request.result) : updatePlaceholder("Error downloading salary.");
   }
 });
