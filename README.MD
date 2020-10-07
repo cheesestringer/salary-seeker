@@ -2,7 +2,7 @@
 
 Calculate the salary range for jobs advertised on [Seek](https://seek.com.au).
 
-<img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" width="120" />
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" width="150" />](https://www.buymeacoffee.com/cheesestringer)
 
 ### Install
 
