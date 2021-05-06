@@ -1,0 +1,21 @@
+:root {
+  --mdc-theme-primary: #003eee;
+}
+
+body {
+  min-width: 250px;
+}
+
+#no-jobs {
+  display: none;
+}
+
+.mdc-data-table__header-cell {
+  font-weight: 700;
+}
+
+.mdc-button__label {
+  max-width: 485px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -37,7 +37,7 @@ const calculateRange = async url => {
 
     if (minSalary && maxSalary) {
       const range = `$${minSalary.toLocaleString()} - $${maxSalary.toLocaleString()}`;
-      cacheJob(jobId, minSalary, maxSalary, range);
+      cacheJob(jobId, job.title, job.companyName, minSalary, maxSalary, range);
       return range;
     }
   } else {
@@ -159,12 +159,14 @@ const getJob = async (jobId, min, max) => {
   }
 };
 
-const cacheJob = (jobId, minimum, maximum, range) => {
+const cacheJob = (jobId, title, company, minimum, maximum, range) => {
   try {
     const currentDate = new Date().getTime();
     const cache = JSON.parse(localStorage.getItem(constants.cacheKey)) || [];
     const job = {
       id: jobId,
+      title: title,
+      company: company,
       minimum: minimum,
       maxiumum: maximum,
       range: range,
