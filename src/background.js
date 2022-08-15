@@ -17,7 +17,7 @@ const calculateRange = async url => {
   }
 
   const minRange = 30000;
-  const maxRange = 200000;
+  const maxRange = 999999;
 
   const jobDetails = await getJobDetails(jobId);
   const job = jobDetails.data.find(x => x.id == jobId);
@@ -116,7 +116,7 @@ const getMiddle = (lower, upper) => {
 };
 
 const buggerAllChange = (first, second) => {
-  return (first / second) * 100 > 96;
+  return (first / second) * 100 > 99.4;
 };
 
 const roundUp = value => {
