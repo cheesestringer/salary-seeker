@@ -24,6 +24,10 @@ We use [BrowserStack](https://browserstack.com) for automated testing on differe
 
 [![BrowserStack](https://i.imgur.com/r3uUfYN.png)](https://browserstack.com)
 
+### Disclaimer
+
+This extension is not connected with, or approved by, Seek Limited.
+
 ### Acknowledgements
 
 Based on [b3n-j4m1n's salary-seeker](https://github.com/b3n-j4m1n/salary-seeker) bash script.
