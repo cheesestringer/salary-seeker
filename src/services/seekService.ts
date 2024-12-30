@@ -1,5 +1,5 @@
 import { buggerAllChange, getMiddle, isDevelopment, roundDown, roundUp } from '~common';
-import { maxRequests } from '~constants';
+import { maxRequests, newZealandQuerySiteKey, newZealandQueryWhere, seekNewZealand } from '~constants';
 
 const searchUrl = `${window.location.origin}/api/jobsearch/v5/search`;
 
@@ -32,6 +32,11 @@ const getJobDetails = async (jobId: string) => {
   url.searchParams.set('jobid', jobId);
   url.searchParams.set('source', 'salary-seeker');
 
+  if (url.hostname.toLocaleLowerCase().includes(seekNewZealand)) {
+    url.searchParams.set('siteKey', newZealandQuerySiteKey);
+    url.searchParams.set('where', newZealandQueryWhere);
+  }
+
   const response = await fetch(url.href);
   return response.json();
 };
@@ -47,8 +52,8 @@ const getJobId = (href: string) => {
   }
 };
 
-export const getPrice = async (url: string, signal: AbortSignal): Promise<readonly [number, number]> => {
-  const jobId = getJobId(url);
+export const getPrice = async (href: string, signal: AbortSignal): Promise<readonly [number, number]> => {
+  const jobId = getJobId(href);
   if (!jobId) {
     return null;
   }
@@ -70,8 +75,9 @@ export const getPrice = async (url: string, signal: AbortSignal): Promise<readon
       params.set('keywords', job.title);
     }
 
-    if (url.includes('seek.co.nz')) {
-      params.set('where', 'New+Zealand');
+    if (href.toLocaleLowerCase().includes(seekNewZealand)) {
+      params.set('siteKey', newZealandQuerySiteKey);
+      params.set('where', newZealandQueryWhere);
     }
 
     const maxSalary = await getMaxSalary(jobId, minRange, maxRange, params, signal);

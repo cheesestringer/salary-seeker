@@ -1,7 +1,7 @@
 {
   "name": "salary-seeker",
   "displayName": "Salary Seeker",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Take the guess work out of job hunting.",
   "author": "cheesestringer",
   "scripts": {
