@@ -43,3 +43,7 @@ This extension is not connected with, or approved by, Seek Limited.
 ## Acknowledgements
 
 Based on [b3n-j4m1n's salary-seeker](https://github.com/b3n-j4m1n/salary-seeker) bash script.
+
+## Contact
+
+cheesestringer@protonmail.com
