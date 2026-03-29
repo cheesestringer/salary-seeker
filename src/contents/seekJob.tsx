@@ -2,7 +2,7 @@ import type { PlasmoCSConfig, PlasmoGetInlineAnchor, PlasmoGetStyle } from 'plas
 import { Seek } from '~components/seek';
 
 export const config: PlasmoCSConfig = {
-  matches: ['https://www.seek.com.au/*', 'https://www.seek.co.nz/*']
+  matches: ['https://www.seek.com.au/*', 'https://www.seek.co.nz/*', 'https://*.seek.com/*']
 };
 
 // Inline the stylesheets since css files currently get bundled in to content scripts as resources

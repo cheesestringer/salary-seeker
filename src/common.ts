@@ -1,4 +1,4 @@
-import { oneDayInMs } from '~constants';
+import { seekNewZealand, seekNewZealandSubDomain } from '~constants';
 
 export const isDevelopment = () => {
   return process.env.NODE_ENV === 'development';
@@ -27,4 +27,9 @@ export const roundUp = (value: number) => {
 
 export const roundDown = (value: number) => {
   return Math.floor(value / 1000) * 1000;
+};
+
+export const isNewZealand = (value: string): boolean => {
+  const lowered = value.toLocaleLowerCase();
+  return lowered.includes(seekNewZealand) || lowered.includes(seekNewZealandSubDomain);
 };

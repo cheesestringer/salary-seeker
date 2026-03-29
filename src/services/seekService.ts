@@ -1,5 +1,5 @@
-import { buggerAllChange, getMiddle, isDevelopment, roundDown, roundUp } from '~common';
-import { maxRequests, newZealandQuerySiteKey, newZealandQueryWhere, seekNewZealand } from '~constants';
+import { buggerAllChange, getMiddle, isDevelopment, isNewZealand, roundDown, roundUp } from '~common';
+import { maxRequests, newZealandQuerySiteKey, newZealandQueryWhere } from '~constants';
 
 const searchUrl = `${window.location.origin}/api/jobsearch/v5/search`;
 
@@ -32,7 +32,7 @@ const getJobDetails = async (jobId: string) => {
   url.searchParams.set('jobid', jobId);
   url.searchParams.set('source', 'salary-seeker');
 
-  if (url.hostname.toLocaleLowerCase().includes(seekNewZealand)) {
+  if (isNewZealand(url.hostname)) {
     url.searchParams.set('siteKey', newZealandQuerySiteKey);
     url.searchParams.set('where', newZealandQueryWhere);
   }
@@ -75,7 +75,7 @@ export const getPrice = async (href: string, signal: AbortSignal): Promise<reado
       params.set('keywords', job.title);
     }
 
-    if (href.toLocaleLowerCase().includes(seekNewZealand)) {
+    if (isNewZealand(href)) {
       params.set('siteKey', newZealandQuerySiteKey);
       params.set('where', newZealandQueryWhere);
     }

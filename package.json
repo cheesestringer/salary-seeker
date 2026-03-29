@@ -1,7 +1,7 @@
 {
   "name": "salary-seeker",
   "displayName": "Salary Seeker",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "Take the guess work out of job hunting.",
   "author": "cheesestringer",
   "scripts": {
@@ -23,5 +23,12 @@
     "@types/react-dom": "18.2.18",
     "prettier": "3.2.4",
     "typescript": "5.3.3"
+  },
+  "manifest": {
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "{33001643-9e70-4228-93a8-5614e78f7752}"
+      }
+    }
   }
 }
